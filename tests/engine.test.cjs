@@ -1,0 +1,8 @@
+const assert=require('node:assert/strict');const {Mine,ORES}=require('../app/src/main/assets/engine.js');
+let m=new Mine(null,()=>.5);assert.equal(m.s.hp,8);for(let i=0;i<4;i++)m.hit(1000+i*100);assert.equal(m.s.mined,1);assert.equal(m.s.bag[0],1);assert(m.sell()>0);assert.equal(m.total(),0);assert.equal(m.sell(),0);assert.equal(m.buy(0),false);m.s.coins=1000;assert(m.buy(0));assert.equal(m.s.levels[0],1);assert.equal(m.s.coins,965);assert.equal(m.buy(-1),false);
+m.s.pity=79;m.roll();assert(m.s.ore>=5);m.s.bombs=0;let hp=m.s.hp;assert.equal(m.hit(1,false,true),null);assert.equal(m.s.hp,hp);m.s.bombs=1;m.hit(2,false,true);assert.equal(m.s.bombs,0);
+m.s.levels[3]=2;m.s.last=1000;assert.equal(m.offline(1000+3600*1000),1800);assert.equal(m.offline(1000+3600*1000),0);m.s.last=0;assert.equal(m.offline(999999999),7200);
+m.s.mined=25;assert.equal(m.claim(),150);assert.equal(m.claim(),0);const loaded=new Mine(JSON.parse(m.serialize()));assert.deepEqual(loaded.s.bag,m.s.bag);assert.equal(loaded.s.hp,m.s.hp);assert.equal(loaded.s.ore,m.s.ore);
+assert(Math.abs(m.odds().reduce((a,b)=>a+b,0)-100)<1e-9);let base=m.odds()[9];m.s.levels[1]=10;assert(m.odds()[9]>base);
+// Deterministic 100,000-draw distribution checks catch reversed rarity weights.
+let seed=123;const rng=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};let sim=new Mine(null,rng),counts=Array(10).fill(0);for(let i=0;i<100000;i++){sim.roll();counts[sim.s.ore]++;}assert(counts[0]>counts[1]*2);assert(counts[8]<100);assert(counts[9]<30);assert(counts[5]>500);console.log('PASS: mining, sale, upgrades, pity, bombs, offline cap, quests, save restoration, odds, 100k seeded draws');
