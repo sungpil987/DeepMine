@@ -18,6 +18,20 @@ jobs:
         with:
           node-version: '22'
       - run: node tests/engine.test.cjs
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Mobile browser integration test
+        run: node tests/ui.test.cjs
+        env:
+          SCREENSHOT_PATH: /tmp/deepmine-v2-mobile.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: DeepMine-UI-preview
+          path: /tmp/deepmine-v2-mobile.png
+          if-no-files-found: ignore
       - uses: android-actions/setup-android@v3
         with:
           packages: platform-tools platforms;android-35 build-tools;35.0.0
@@ -25,8 +39,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: deepmine-dev-signing-v1
       - run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: DeepMine-APK
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
