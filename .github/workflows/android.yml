@@ -43,9 +43,15 @@ jobs:
         with:
           path: ~/.android/debug.keystore
           key: deepmine-dev-signing-v1
-      - run: gradle assembleDebug --no-daemon
+      - name: Build update and side-by-side APKs
+        run: |
+          mkdir -p dist
+          gradle assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk dist/DeepMine-2.0-update.apk
+          gradle assembleDebug -PsideBySide=true --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk dist/DeepMine-2.0-separate.apk
       - uses: actions/upload-artifact@v4
         with:
           name: DeepMine-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: dist/*.apk
           if-no-files-found: error
