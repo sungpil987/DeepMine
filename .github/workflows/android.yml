@@ -18,6 +18,7 @@ jobs:
         with:
           node-version: '22'
       - run: node tests/engine.test.cjs
+      - run: node tests/balance.cjs
       - name: Install browser test tools
         run: |
           npm install --no-save --ignore-scripts playwright@1.56.1
@@ -25,12 +26,12 @@ jobs:
       - name: Mobile browser integration test
         run: node tests/ui.test.cjs
         env:
-          SCREENSHOT_PATH: /tmp/deepmine-v2-mobile.png
+          SCREENSHOT_PATH: /tmp/deepmine-v3-mobile.png
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: DeepMine-UI-preview
-          path: /tmp/deepmine-v2-mobile.png
+          path: /tmp/deepmine-v3-mobile.png
           if-no-files-found: ignore
       - uses: android-actions/setup-android@v3
         with:
@@ -47,9 +48,9 @@ jobs:
         run: |
           mkdir -p dist
           gradle assembleDebug --no-daemon
-          cp app/build/outputs/apk/debug/app-debug.apk dist/DeepMine-2.0-update.apk
+          cp app/build/outputs/apk/debug/app-debug.apk dist/DeepMine-3.0-update.apk
           gradle assembleDebug -PsideBySide=true --no-daemon
-          cp app/build/outputs/apk/debug/app-debug.apk dist/DeepMine-2.0-separate.apk
+          cp app/build/outputs/apk/debug/app-debug.apk dist/DeepMine-3.0-separate.apk
       - uses: actions/upload-artifact@v4
         with:
           name: DeepMine-APK
