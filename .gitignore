@@ -7,3 +7,5 @@ local.properties
 node_modules/
 package-lock.json
 dist/
+.signing/
+*.keystore

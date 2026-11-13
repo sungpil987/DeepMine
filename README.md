@@ -43,12 +43,14 @@
 
 APK는 GitHub Actions → 성공 실행 → **DeepMine-APK**에서 받습니다.
 
-- **2.0 separate를 설치한 사용자:** `DeepMine-3.0-separate.apk`를 기존 앱 위에 업데이트. 패키지명 `com.peter.deepmine.v2` 유지, 버전 코드 3.
-- 원래 패키지로 2.0을 설치했다면 `DeepMine-3.0-update.apk` 사용. 패키지명 `com.peter.deepmine` 유지.
-- 기존 1.0은 다른 임시 서명이어서 덮어설치 불가. 1.0을 지우지 않고 separate APK를 설치하면 원래 앱과 데이터는 남지만 두 앱 사이의 자동 이전은 없습니다.
-- 개발 서명 키를 Actions 캐시로 재사용합니다. 키는 저장소에 커밋하지 않습니다. 캐시 유실 이후 동일 서명은 보장되지 않으므로 장기 배포에는 소유자 관리 release 키와 GitHub Secrets 구성이 필요합니다.
+- **2.0에서 옮기기:** 2.0 설정 → 백업 생성 → 코드 복사. `DeepMine-3.0-separate.apk`를 설치한 뒤 3.0 설정에 코드를 붙여넣고 복원 확인을 두 번 누르세요. 패키지명 `com.peter.deepmine.v3`라서 1.0/2.0과 나란히 설치됩니다. 기존 앱이나 기록을 지울 필요가 없습니다.
+- `DeepMine-3.0-update.apk`는 원래 패키지명 `com.peter.deepmine`을 사용하는 신규 설치용 대안입니다. 1.0/2.0과 서명이 달라 덮어설치할 수 없습니다. 기존 앱을 삭제하지 말고 separate APK와 백업 복원 경로를 이용하세요.
+- 2.0과 3.0의 APK 인증서를 직접 비교해 불일치를 확인했습니다. 이전 캐시 경로에는 실제 키 파일이 없었고 저장되지 않았습니다. 이전 비공개 서명 키는 APK에서 복구할 수 없습니다.
+- 3.0부터 Gradle에 `.signing/development.keystore`를 명시하고 같은 경로를 Actions 캐시로 복구/저장합니다. 키는 저장소에 커밋하지 않습니다. 캐시 유실 이후 동일 서명은 보장되지 않으므로 장기 배포에는 소유자 관리 release 키와 GitHub Secrets 구성이 필요합니다. 이후에도 업데이트 전 설정에서 백업을 보관하세요.
 
 ## 개발과 검증
+
+로컬 APK 빌드 시 `.signing/development.keystore`를 먼저 준비해야 합니다(생성 명령은 workflow 참조).
 
 JDK 17 / Gradle 8.9 / SDK 35 / Android 8.0 이상. 버전 3.0.0.
 

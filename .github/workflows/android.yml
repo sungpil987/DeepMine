@@ -42,8 +42,15 @@ jobs:
           gradle-version: '8.9'
       - uses: actions/cache@v4
         with:
-          path: ~/.android/debug.keystore
-          key: deepmine-dev-signing-v1
+          path: .signing/development.keystore
+          key: deepmine-development-signing-v3
+      - name: Prepare development signing key
+        run: |
+          mkdir -p .signing
+          if [ ! -f .signing/development.keystore ]; then
+            keytool -genkeypair -keystore .signing/development.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=DeepMine Development,O=DeepMine,C=KR"
+          fi
+          test -s .signing/development.keystore
       - name: Build update and side-by-side APKs
         run: |
           mkdir -p dist
